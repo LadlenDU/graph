@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Случайный граф.</title>
+
+    <!--<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
+
+    <style type="text/css">
+        #container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        #mynetwork {
+            width: 100%;
+            height: 600px;
+            border: 1px solid lightgray;
+            margin: 10px 0;
+        }
+    </style>
+
+</head>
+<body>
+
+<div id="container">
+    <label for="nodes">Вершин: <input type="text" maxlength="3" id="nodes"></label>
+    <label for="edges">Рёбер: <input type="text" maxlength="3" id="edges"></label>
+    <button id="generate">Сгенерировать</button>
+
+    <div id="mynetwork"></div>
+
+</div>
+
+<script type="text/javascript">
+    "use strict";
+
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    var N = 5;  // Вершины
+    var M = 5;  // Ребра
+
+    var i;
+
+    var nodeValues = [];
+    for (i = 1; i <= N; ++i) {
+        nodeValues.push({id: i, label: 'Узел ' + i});
+    }
+
+    var edgeValues = [];
+    for (i = 1; i <= M; ++i) {
+        var from = getRandomInt(1, N);
+        var to = getRandomInt(1, N);
+        edgeValues.push({from: from, to: to});
+    }
+
+    /*var nodes = new vis.DataSet(nodeValues);
+    var edges = new vis.DataSet(edgeValues);*/
+
+    // create an array with nodes
+    var nodes = new vis.DataSet([
+        {id: 1, label: 'Node 1'},
+        {id: 2, label: 'Node 2'},
+        {id: 3, label: 'Node 3'},
+        {id: 4, label: 'Node 4'},
+        {id: 5, label: 'Node 5'}
+    ]);
+
+    // create an array with edges
+    var edges = new vis.DataSet([
+        {from: 1, to: 3},
+        {from: 1, to: 2},
+        {from: 2, to: 4},
+        {from: 2, to: 5},
+        {from: 3, to: 3}
+    ]);
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {};
+    var network = new vis.Network(container, data, options);
+</script>
+
+</body>
+</html>
