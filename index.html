@@ -12,26 +12,65 @@
     <style type="text/css">
         #container {
             width: 80%;
-            margin: 20px auto;
+            margin: 10px auto;
         }
 
-        #mynetwork {
-            width: 100%;
+        #mynetwork, #mynetwork_text {
+            width: 49%;
             height: 600px;
             border: 1px solid lightgray;
-            margin: 10px 0;
+            /*margin: 10px 0;*/
+            display: inline-block;
         }
+
+        #mynetwork_text {
+            overflow: auto;
+            background-color: grey;
+        }
+
+        table td {
+            vertical-align: top;
+        }
+
     </style>
 
 </head>
 <body>
 
 <div id="container">
-    <label for="nodes">Вершин: <input type="text" maxlength="3" id="nodes"></label>
-    <label for="edges">Рёбер: <input type="text" maxlength="3" id="edges"></label>
-    <button id="generate">Сгенерировать</button>
-
+    <table style="width: 100%">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="nodes">Вершин:</label>
+                        </td>
+                        <td>
+                            <input type="text" maxlength="3" id="nodes" value="5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="edges">Рёбер:</label>
+                        </td>
+                        <td>
+                            <input type="text" maxlength="3" id="edges" value="5">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <label for="simple">Простой граф: <input type="checkbox" id="simple" checked="checked"></label><br>
+                <label for="connected">Cвязный граф: <input type="checkbox" id="connected" checked="checked"></label>
+            </td>
+            <td>
+                <button id="generate">Сгенерировать</button>
+            </td>
+        </tr>
+    </table>
     <div id="mynetwork"></div>
+    <div id="mynetwork_text"></div>
 
 </div>
 
@@ -64,7 +103,7 @@
     }
 
     /*var nodes = new vis.DataSet(nodeValues);
-    var edges = new vis.DataSet(edgeValues);*/
+     var edges = new vis.DataSet(edgeValues);*/
 
     // create an array with nodes
     var nodes = new vis.DataSet([
