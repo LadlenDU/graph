@@ -27,14 +27,24 @@
             overflow: auto;
             background-color: #EEE;
             padding: 10px;
+            -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+            box-sizing: border-box;         /* Opera/IE 8+ */
         }
 
         table td {
             vertical-align: top;
         }
 
-        #mynetwork_text table td {
+        #mynetwork_text table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+        #mynetwork_text table td, #mynetwork_text table th {
             border: 1px steelblue dashed;
+            text-align: center;
+            vertical-align: middle;
+            padding: 5px;
         }
 
     </style>
@@ -119,18 +129,18 @@
                 var id;
                 var s = "Вершин: " + edgesNodes.nodes + "; Рёбер: " + edgesNodes.edges + ".<br><br>"
                         + "Вершины:<br>"
-                        + "<table><th><td>ID</td><td>Степень</td><td>Рёбра</td></th>";
+                        + "<table><tr><th>ID</th><th>Степень</th><th>Рёбра</th></tr>";
                 for (id in nodes) {
                     s += "<tr><td>" + nodes[id].id + "</td><td></td><td></td></tr>";
                 }
-                s += "</table><br><br>Рёбра:<br>"
-                        + "<table><th><td>ID</td><td>Вершины</td></th>";
+                s += "</table><br>Рёбра:<br>"
+                        + "<table><tr><th>ID</th><th>Вершины</th></tr>";
 
                 for (id in edges) {
                     s += "<tr><td>" + id + "</td><td>" + edges[id].from + " - " + edges[id].to + "</td></tr>";
                 }
 
-                s += "</table><br>";
+                s += "</table><br>&nbsp;<br>";
 
                 $("#mynetwork_text").html(s);
             }
