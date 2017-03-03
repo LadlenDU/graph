@@ -48,11 +48,11 @@
             padding: 5px;
         }
 
-        .connected {
+        .right {
             color: green;
         }
 
-        .not_connected {
+        .wrong {
             color: red;
         }
 
@@ -100,7 +100,7 @@
 
 <script type="text/javascript">
     $(function () {
-        function graph() {
+        function Graph() {
             /**
              * Returns a random integer between min (inclusive) and max (inclusive)
              * Using Math.round() will give you a non-uniform distribution!
@@ -149,7 +149,7 @@
                 return nodeEdgesInfo;
             }
 
-            function ifGraphConnected(nodeValues, edgeValues, nodeEdgesInfo) {
+            function ifConnected(nodeValues, edgeValues, nodeEdgesInfo) {
                 var nodeMap = Array.apply(null, Array(nodeValues.length)).map(Number.prototype.valueOf, 1);
                 nodeMap[0] = 2;
 
@@ -172,12 +172,30 @@
                 return nodeMap.indexOf(1) == -1 ? true : false;
             }
 
-            function showTextData(edgesNodes, nodes, edges, nodeEdgesInfo, graphConnected) {
+            function hasOddDegree(nodeValues, nodeEdgesInfo) {
+                var hasOddDegree = false;
+                for (var id in nodeValues) {
+                    var nId = nodeValues[id].id;
+                    var degree = nodeEdgesInfo[nId] ? nodeEdgesInfo[nId].length : 0;
+                    if (degree % 2 == 1) {
+                        hasOddDegree = true;
+                        break;
+                    }
+                }
+                return hasOddDegree;
+            }
+
+            function mkResultString(right, rightString, wrongString) {
+                return "<span class='" + (right ? "right" : "wrong") + "'>" + (right ? rightString : wrongString) + "</span>";
+            }
+
+            function showTextData(edgesNodes, nodes, edges, nodeEdgesInfo, connected, oddDegree) {
                 var id;
                 var s = "Вершин: " + edgesNodes.nodes + "; Рёбер: " + edgesNodes.edges + ".<br><br>"
-                        + "<span class='" + (graphConnected ? "connected" : "not_connected") + "'>"
-                        + (graphConnected ? "Граф связный" : "Граф НЕ связный") + "</span>"
-                        + "<br><br>Вершины:<br>"
+                        + mkResultString(connected, "Граф связный", "Граф НЕ связный") + "<br>"
+                        + mkResultString(!oddDegree, "Граф НЕ содержит вершины нечётной степени", "Граф содержит вершины нечётной степени") + "<br>"
+                        + mkResultString(connected && !oddDegree, "Эйлеров цикл", "НЕ эйлеров цикл") + "<br>"
+                        + "<br>Вершины:<br>"
                         + "<table><tr><th>ID</th><th>Степень</th><th>Рёбра</th></tr>";
                 for (id in nodes) {
                     var nId = nodes[id].id;
@@ -206,12 +224,13 @@
 
                     var nodeEdgesInfo = mkNodeEdgesInfo(edgeValues);
 
-                    var graphConnected = ifGraphConnected(nodeValues, edgeValues, nodeEdgesInfo);
+                    var connected = ifConnected(nodeValues, edgeValues, nodeEdgesInfo);
+                    var oddDegree = hasOddDegree(nodeValues, nodeEdgesInfo);
 
                     var nodes = new vis.DataSet(nodeValues);
                     var edges = new vis.DataSet(edgeValues);
 
-                    showTextData(edgesNodes, nodeValues, edgeValues, nodeEdgesInfo, graphConnected);
+                    showTextData(edgesNodes, nodeValues, edgeValues, nodeEdgesInfo, connected, oddDegree);
 
                     // create a network
                     var container = document.getElementById('mynetwork');
@@ -225,7 +244,7 @@
             }
         }
 
-        var gr = new graph;
+        var gr = new Graph;
         gr.generateRandom();
 
         $("#generate").click(function () {
