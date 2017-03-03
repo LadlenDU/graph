@@ -25,11 +25,16 @@
 
         #mynetwork_text {
             overflow: auto;
-            background-color: grey;
+            background-color: #EEE;
+            padding: 10px;
         }
 
         table td {
             vertical-align: top;
+        }
+
+        #mynetwork_text table td {
+            border: 1px steelblue dashed;
         }
 
     </style>
@@ -65,7 +70,7 @@
                 <label for="connected">Cвязный граф: <input type="checkbox" id="connected" checked="checked"></label>
             </td>
             <td>
-                <button id="generate">Сгенерировать</button>
+                <button id="generate">Сгенерировать случайный граф</button>
             </td>
         </tr>
     </table>
@@ -110,12 +115,37 @@
                 return edgeValues;
             }
 
+            function showTextData(edgesNodes, nodes, edges) {
+                var id;
+                var s = "Вершин: " + edgesNodes.nodes + "; Рёбер: " + edgesNodes.edges + ".<br><br>"
+                        + "Вершины:<br>"
+                        + "<table><th><td>ID</td><td>Степень</td><td>Рёбра</td></th>";
+                for (id in nodes) {
+                    s += "<tr><td>" + nodes[id].id + "</td><td></td><td></td></tr>";
+                }
+                s += "</table><br><br>Рёбра:<br>"
+                        + "<table><th><td>ID</td><td>Вершины</td></th>";
+
+                for (id in edges) {
+                    s += "<tr><td>" + id + "</td><td>" + edges[id].from + " - " + edges[id].to + "</td></tr>";
+                }
+
+                s += "</table><br>";
+
+                $("#mynetwork_text").html(s);
+            }
+
             return {
                 generateRandom: function () {
                     var edgesNodes = getEdgesNodes();
 
-                    var nodes = new vis.DataSet(mkNodeValues(edgesNodes));
-                    var edges = new vis.DataSet(mkEdgeValues(edgesNodes));
+                    var nodeValues = mkNodeValues(edgesNodes);
+                    var edgeValues = mkEdgeValues(edgesNodes);
+
+                    var nodes = new vis.DataSet(nodeValues);
+                    var edges = new vis.DataSet(edgeValues);
+
+                    showTextData(edgesNodes, nodeValues, edgeValues);
 
                     // create a network
                     var container = document.getElementById('mynetwork');
