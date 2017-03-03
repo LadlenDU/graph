@@ -77,7 +77,7 @@
                 </table>
             </td>
             <td>
-                <label for="simple">Простой граф: <input type="checkbox" id="simple" checked="checked"></label><br>
+                <!--<label for="simple">Простой граф: <input type="checkbox" id="simple" checked="checked"></label><br>-->
                 <label for="connected">Cвязный граф: <input type="checkbox" id="connected" checked="checked"></label>
             </td>
             <td>
@@ -110,7 +110,7 @@
 
             function mkNodeValues(edgesNodes) {
                 var nodeValues = [];
-                for (var i = 1; i <= edgesNodes.nodes; ++i) {
+                for (var i = 0; i < edgesNodes.nodes; ++i) {
                     nodeValues.push({id: i, label: 'Узел ' + i});
                 }
                 return nodeValues;
@@ -118,12 +118,50 @@
 
             function mkEdgeValues(edgesNodes) {
                 var edgeValues = [];
-                for (i = 1; i <= edgesNodes.edges; ++i) {
-                    var from = getRandomInt(1, edgesNodes.nodes);
-                    var to = getRandomInt(1, edgesNodes.nodes);
+                for (i = 0; i < edgesNodes.edges; ++i) {
+                    var from = getRandomInt(0, edgesNodes.nodes - 1);
+                    var to = getRandomInt(0, edgesNodes.nodes - 1);
                     edgeValues.push({id: i, from: from, to: to, label: i, font: {align: 'middle'}});
                 }
                 return edgeValues;
+            }
+
+            function mkNodeEdgesInfo(edgeValues) {
+                var nodeEdgesInfo = [];
+                for (var id in edgeValues) {
+                    if (!nodeEdgesInfo[edgeValues[id].from]) {
+                        nodeEdgesInfo[edgeValues[id].from] = [];
+                    }
+                    if (!nodeEdgesInfo[edgeValues[id].to]) {
+                        nodeEdgesInfo[edgeValues[id].to] = [];
+                    }
+                    nodeEdgesInfo[edgeValues[id].from].push(edgeValues[id].id);
+                    nodeEdgesInfo[edgeValues[id].to].push(edgeValues[id].id);
+                }
+                return nodeEdgesInfo;
+            }
+
+            function ifGraphConnected(nodeValues, edgeValues, nodeEdgesInfo) {
+                var nodeMap = Array.apply(null, Array(nodeValues.length)).map(Number.prototype.valueOf, 1);
+                nodeMap[0] = 2;
+
+                for (; ;) {
+                    var secMark = nodeMap.indexOf(2);
+                    if (secMark == -1 || !nodeEdgesInfo[secMark]) {
+                        break;
+                    }
+                    nodeMap[secMark] = 3;
+                    for (var id in nodeEdgesInfo[secMark]) {
+                        if (nodeMap[edgeValues[nodeEdgesInfo[secMark][id]].from] == 1) {
+                            nodeMap[edgeValues[nodeEdgesInfo[secMark][id]].from] = 2;
+                        }
+                        if (nodeMap[edgeValues[nodeEdgesInfo[secMark][id]].to] == 1) {
+                            nodeMap[edgeValues[nodeEdgesInfo[secMark][id]].to] = 2;
+                        }
+                    }
+                }
+
+                return nodeMap.indexOf(1) == -1 ? true : false;
             }
 
             function showTextData(edgesNodes, nodes, edges, nodeEdgesInfo) {
@@ -132,9 +170,10 @@
                         + "Вершины:<br>"
                         + "<table><tr><th>ID</th><th>Степень</th><th>Рёбра</th></tr>";
                 for (id in nodes) {
-                    var edgesList = nodeEdgesInfo[id] ? nodeEdgesInfo[id].join() : "&lt;-нет-&gt;";
-                    var edgesListLength = nodeEdgesInfo[id] ? nodeEdgesInfo[id].length : 0;
-                    s += "<tr><td>" + nodes[id].id + "</td><td>" + edgesListLength + "</td><td>" + edgesList + "</td></tr>";
+                    var nId = nodes[id].id;
+                    var edgesList = nodeEdgesInfo[nId] ? nodeEdgesInfo[nId].join() : "&lt;-нет-&gt;";
+                    var edgesListLength = nodeEdgesInfo[nId] ? nodeEdgesInfo[nId].length : 0;
+                    s += "<tr><td>" + nId + "</td><td>" + edgesListLength + "</td><td>" + edgesList + "</td></tr>";
                 }
                 s += "</table><br>Рёбра:<br>"
                         + "<table><tr><th>ID</th><th>Вершины</th></tr>";
@@ -155,17 +194,9 @@
                     var nodeValues = mkNodeValues(edgesNodes);
                     var edgeValues = mkEdgeValues(edgesNodes);
 
-                    var nodeEdgesInfo = [];
-                    for (var id in edgeValues) {
-                        if (!nodeEdgesInfo[edgeValues[id].from]) {
-                            nodeEdgesInfo[edgeValues[id].from] = [];
-                        }
-                        if (!nodeEdgesInfo[edgeValues[id].to]) {
-                            nodeEdgesInfo[edgeValues[id].to] = [];
-                        }
-                        nodeEdgesInfo[edgeValues[id].from].push(id);
-                        nodeEdgesInfo[edgeValues[id].to].push(id);
-                    }
+                    var nodeEdgesInfo = mkNodeEdgesInfo(edgeValues);
+
+                    var graphConnected = ifGraphConnected(nodeValues, edgeValues, nodeEdgesInfo);
 
                     var nodes = new vis.DataSet(nodeValues);
                     var edges = new vis.DataSet(edgeValues);
