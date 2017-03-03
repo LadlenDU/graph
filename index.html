@@ -48,6 +48,14 @@
             padding: 5px;
         }
 
+        .connected {
+            color: green;
+        }
+
+        .not_connected {
+            color: red;
+        }
+
     </style>
 
 </head>
@@ -164,10 +172,12 @@
                 return nodeMap.indexOf(1) == -1 ? true : false;
             }
 
-            function showTextData(edgesNodes, nodes, edges, nodeEdgesInfo) {
+            function showTextData(edgesNodes, nodes, edges, nodeEdgesInfo, graphConnected) {
                 var id;
                 var s = "Вершин: " + edgesNodes.nodes + "; Рёбер: " + edgesNodes.edges + ".<br><br>"
-                        + "Вершины:<br>"
+                        + "<span class='" + (graphConnected ? "connected" : "not_connected") + "'>"
+                        + (graphConnected ? "Граф связный" : "Граф НЕ связный") + "</span>"
+                        + "<br><br>Вершины:<br>"
                         + "<table><tr><th>ID</th><th>Степень</th><th>Рёбра</th></tr>";
                 for (id in nodes) {
                     var nId = nodes[id].id;
@@ -201,7 +211,7 @@
                     var nodes = new vis.DataSet(nodeValues);
                     var edges = new vis.DataSet(edgeValues);
 
-                    showTextData(edgesNodes, nodeValues, edgeValues, nodeEdgesInfo);
+                    showTextData(edgesNodes, nodeValues, edgeValues, nodeEdgesInfo, graphConnected);
 
                     // create a network
                     var container = document.getElementById('mynetwork');
