@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Случайный граф.</title>
 
-    <!--<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
 
     <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
@@ -75,62 +75,68 @@
 </div>
 
 <script type="text/javascript">
-    "use strict";
+    $(function () {
+        function graph() {
+            /**
+             * Returns a random integer between min (inclusive) and max (inclusive)
+             * Using Math.round() will give you a non-uniform distribution!
+             */
+            function getRandomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
 
-    /**
-     * Returns a random integer between min (inclusive) and max (inclusive)
-     * Using Math.round() will give you a non-uniform distribution!
-     */
-    function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+            function getEdgesNodes() {
+                return {
+                    'nodes': $("#nodes").val(),
+                    'edges': $("#edges").val()
+                };
+            }
 
-    var N = 5;  // Вершины
-    var M = 5;  // Ребра
+            function mkNodeValues(edgesNodes) {
+                var nodeValues = [];
+                for (var i = 1; i <= edgesNodes.nodes; ++i) {
+                    nodeValues.push({id: i, label: 'Узел ' + i});
+                }
+                return nodeValues;
+            }
 
-    var i;
+            function mkEdgeValues(edgesNodes) {
+                var edgeValues = [];
+                for (i = 1; i <= edgesNodes.edges; ++i) {
+                    var from = getRandomInt(1, edgesNodes.nodes);
+                    var to = getRandomInt(1, edgesNodes.nodes);
+                    edgeValues.push({from: from, to: to});
+                }
+                return edgeValues;
+            }
 
-    var nodeValues = [];
-    for (i = 1; i <= N; ++i) {
-        nodeValues.push({id: i, label: 'Узел ' + i});
-    }
+            return {
+                generateRandom: function () {
+                    var edgesNodes = getEdgesNodes();
 
-    var edgeValues = [];
-    for (i = 1; i <= M; ++i) {
-        var from = getRandomInt(1, N);
-        var to = getRandomInt(1, N);
-        edgeValues.push({from: from, to: to});
-    }
+                    var nodes = new vis.DataSet(mkNodeValues(edgesNodes));
+                    var edges = new vis.DataSet(mkEdgeValues(edgesNodes));
 
-    /*var nodes = new vis.DataSet(nodeValues);
-     var edges = new vis.DataSet(edgeValues);*/
+                    // create a network
+                    var container = document.getElementById('mynetwork');
+                    var data = {
+                        nodes: nodes,
+                        edges: edges
+                    };
+                    var options = {};
+                    var network = new vis.Network(container, data, options);
+                }
+            }
+        }
 
-    // create an array with nodes
-    var nodes = new vis.DataSet([
-        {id: 1, label: 'Node 1'},
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-        {id: 4, label: 'Node 4'},
-        {id: 5, label: 'Node 5'}
-    ]);
+        var gr = new graph;
+        gr.generateRandom();
 
-    // create an array with edges
-    var edges = new vis.DataSet([
-        {from: 1, to: 3},
-        {from: 1, to: 2},
-        {from: 2, to: 4},
-        {from: 2, to: 5},
-        {from: 3, to: 3}
-    ]);
+        $("#generate").click(function () {
+            gr.generateRandom();
+        });
+    });
 
-    // create a network
-    var container = document.getElementById('mynetwork');
-    var data = {
-        nodes: nodes,
-        edges: edges
-    };
-    var options = {};
-    var network = new vis.Network(container, data, options);
 </script>
 
 </body>
