@@ -28,8 +28,8 @@
             background-color: #EEE;
             padding: 10px;
             -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-            -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-            box-sizing: border-box;         /* Opera/IE 8+ */
+            -moz-box-sizing: border-box; /* Firefox, other Gecko */
+            box-sizing: border-box; /* Opera/IE 8+ */
         }
 
         table td {
@@ -40,6 +40,7 @@
             border-spacing: 0;
             border-collapse: collapse;
         }
+
         #mynetwork_text table td, #mynetwork_text table th {
             border: 1px steelblue dashed;
             text-align: center;
@@ -120,24 +121,26 @@
                 for (i = 1; i <= edgesNodes.edges; ++i) {
                     var from = getRandomInt(1, edgesNodes.nodes);
                     var to = getRandomInt(1, edgesNodes.nodes);
-                    edgeValues.push({from: from, to: to});
+                    edgeValues.push({id: i, from: from, to: to, label: i, font: {align: 'middle'}});
                 }
                 return edgeValues;
             }
 
-            function showTextData(edgesNodes, nodes, edges) {
+            function showTextData(edgesNodes, nodes, edges, nodeEdgesInfo) {
                 var id;
                 var s = "Вершин: " + edgesNodes.nodes + "; Рёбер: " + edgesNodes.edges + ".<br><br>"
                         + "Вершины:<br>"
                         + "<table><tr><th>ID</th><th>Степень</th><th>Рёбра</th></tr>";
                 for (id in nodes) {
-                    s += "<tr><td>" + nodes[id].id + "</td><td></td><td></td></tr>";
+                    var edgesList = nodeEdgesInfo[id] ? nodeEdgesInfo[id].join() : "&lt;-нет-&gt;";
+                    var edgesListLength = nodeEdgesInfo[id] ? nodeEdgesInfo[id].length : 0;
+                    s += "<tr><td>" + nodes[id].id + "</td><td>" + edgesListLength + "</td><td>" + edgesList + "</td></tr>";
                 }
                 s += "</table><br>Рёбра:<br>"
                         + "<table><tr><th>ID</th><th>Вершины</th></tr>";
 
                 for (id in edges) {
-                    s += "<tr><td>" + id + "</td><td>" + edges[id].from + " - " + edges[id].to + "</td></tr>";
+                    s += "<tr><td>" + edges[id].id + "</td><td>" + edges[id].from + " - " + edges[id].to + "</td></tr>";
                 }
 
                 s += "</table><br>&nbsp;<br>";
@@ -152,10 +155,22 @@
                     var nodeValues = mkNodeValues(edgesNodes);
                     var edgeValues = mkEdgeValues(edgesNodes);
 
+                    var nodeEdgesInfo = [];
+                    for (var id in edgeValues) {
+                        if (!nodeEdgesInfo[edgeValues[id].from]) {
+                            nodeEdgesInfo[edgeValues[id].from] = [];
+                        }
+                        if (!nodeEdgesInfo[edgeValues[id].to]) {
+                            nodeEdgesInfo[edgeValues[id].to] = [];
+                        }
+                        nodeEdgesInfo[edgeValues[id].from].push(id);
+                        nodeEdgesInfo[edgeValues[id].to].push(id);
+                    }
+
                     var nodes = new vis.DataSet(nodeValues);
                     var edges = new vis.DataSet(edgeValues);
 
-                    showTextData(edgesNodes, nodeValues, edgeValues);
+                    showTextData(edgesNodes, nodeValues, edgeValues, nodeEdgesInfo);
 
                     // create a network
                     var container = document.getElementById('mynetwork');
