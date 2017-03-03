@@ -68,18 +68,20 @@
                 <table>
                     <tr>
                         <td>
-                            <label for="nodes">Вершин:</label>
+                            <label for="nodes">Максимум вершин:</label>
                         </td>
                         <td>
-                            <input type="text" maxlength="3" id="nodes" value="5">
+                            <!--<input type="text" maxlength="3" id="nodes" value="5">-->
+                            <input type="text" maxlength="3" id="nodes" value="10">
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <label for="edges">Рёбер:</label>
+                            <label for="edges">Максимум рёбер:</label>
                         </td>
                         <td>
-                            <input type="text" maxlength="3" id="edges" value="5">
+                            <!--<input type="text" maxlength="3" id="edges" value="5">-->
+                            <input type="text" maxlength="3" id="edges" value="30">
                         </td>
                     </tr>
                 </table>
@@ -110,10 +112,14 @@
             }
 
             function getEdgesNodes() {
-                return {
+                /*return {
                     'nodes': $("#nodes").val(),
                     'edges': $("#edges").val()
-                };
+                };*/
+                return {
+                    'nodes': getRandomInt(1, $("#nodes").val()),
+                    'edges': getRandomInt(1, $("#edges").val())
+                }
             }
 
             function mkNodeValues(edgesNodes) {
